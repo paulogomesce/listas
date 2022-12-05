@@ -5,27 +5,21 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+@Entity
+@Table(name = "produto")
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Entity
-public class Usuario {
-
+public class Produto {
+	
 	@Id
+	@Column(name = "id_produto")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@EqualsAndHashCode.Include
-	@Column(name = "id_usuario")
 	private long id;
-	
-	@Column(length = 100, nullable = false)
-	private String nome;
-	
-	@Column(length = 100, nullable = false, unique = true)
-	private String email;//TODO: criar anotation para validar e-mails
-	
-	@Column(length = 32, nullable = false)
-	private String senha;
+
 }
