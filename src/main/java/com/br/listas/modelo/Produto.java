@@ -20,6 +20,8 @@ public class Produto {
 	@Column(name = "id_produto")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@EqualsAndHashCode.Include
-	private long id;
+	private Long id;
+	
+	private String nomeProduto;
 
 }
