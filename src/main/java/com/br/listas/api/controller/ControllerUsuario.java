@@ -24,7 +24,7 @@ public class ControllerUsuario {
 	@PostMapping()
 	public ResponseEntity<Usuario> gravarNovo(@RequestBody Usuario usuario){
 		try {
-			Usuario usuarioGravado = repositorio.gravar(usuario);
+			Usuario usuarioGravado = repositorio.save(usuario);
 			return ResponseEntity.status(HttpStatus.CREATED).body(usuarioGravado);
 		}catch(DataIntegrityViolationException e) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
