@@ -1,6 +1,7 @@
 package com.br.listas.api.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,7 +39,7 @@ public class ControllerLista {
 	@PostMapping
 	public ResponseEntity<AbstractLista> adicionarNova(@RequestBody DtoListaRequest request){
 		AbstractLista lista = FactoryAbstractLista.contruir(request);
-		lista = repositorio.gravar(lista);
+		lista = repositorio.save(lista);
 		return ResponseEntity.status(HttpStatus.CREATED).body(lista);
 	}
 	
@@ -48,7 +49,10 @@ public class ControllerLista {
 	@RequestMapping("/adicionar-item")
 	public ResponseEntity<AbstractItemLista> adicionarItem(@RequestBody DtoItemListaRequest request){
 		try {
-			AbstractLista lista = repositorio.pesquisarPorId(request.getIdLista());
+			Optional<AbstractLista> listaOptional = repositorio.findById(request.getIdLista());
+			
+			AbstractLista lista = listaOptional.orElseThrow();			
+			
 			AbstractItemLista item = null;
 			
 			if(lista instanceof ListaDeCompras) {
@@ -58,11 +62,11 @@ public class ControllerLista {
 				}
 				
 				if(request.getProduto().getId() != null) {
-					produto = repositorioProduto.pesquisarPorId(request.getProduto().getId());
+					produto = repositorioProduto.findById(request.getProduto().getId()).orElseThrow();
 				}else {
 					produto = new Produto();
 					produto.setNomeProduto(request.getProduto().getNomeProduto());
-					produto = repositorioProduto.gravar(produto);
+					produto = repositorioProduto.save(produto);
 				}			
 				
 				item = new ItemListaDeCompras();
@@ -88,7 +92,6 @@ public class ControllerLista {
 			
 			
 		}catch(Exception e) {
-			e.printStackTrace();
 			return ResponseEntity.badRequest().build();
 		}
 		
@@ -96,7 +99,7 @@ public class ControllerLista {
 	
 	@GetMapping
 	public ResponseEntity<List<AbstractLista>> listarTodos(){
-		return ResponseEntity.ok(repositorio.listarTodos());
+		return ResponseEntity.ok(repositorio.findAll());
 	}
 	
 	//TODO: Criar serviço para listar os tipos de lista

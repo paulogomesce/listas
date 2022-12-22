@@ -18,7 +18,6 @@ import javax.persistence.Table;
 
 import com.br.listas.modelo.Usuario;
 import com.br.listas.modelo.itemLista.AbstractItemLista;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Data;
