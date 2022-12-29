@@ -1,6 +1,7 @@
 package com.br.listas.modelo;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,4 +29,7 @@ public class Usuario {
 	
 	@Column(length = 32, nullable = false)
 	private String senha;
+	
+	@Embedded
+	private Endereco endereco;
 }
