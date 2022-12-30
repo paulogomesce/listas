@@ -1,5 +1,7 @@
 package com.br.listas.modelo.itemLista;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,6 +10,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import com.br.listas.modelo.Produto;
 import com.br.listas.modelo.lista.AbstractLista;
@@ -57,7 +62,12 @@ public abstract class AbstractItemLista {
 		return null;
 	}
 	
+	@CreationTimestamp
+	@Column(name="data_criacao", columnDefinition = "datetime")
+	private LocalDateTime dataCriacao;
 	
-	
+	@UpdateTimestamp
+	@Column(name="data_atualizacao", columnDefinition = "datetime")
+	private LocalDateTime dataAtualizacao;
 	
 }

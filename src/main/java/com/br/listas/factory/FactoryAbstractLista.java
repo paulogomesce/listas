@@ -1,7 +1,5 @@
 package com.br.listas.factory;
 
-import java.time.LocalDateTime;
-
 import com.br.listas.api.controller.dtoRequest.DtoListaRequest;
 import com.br.listas.api.controller.dtoRequest.EnumTipoLista;
 import com.br.listas.modelo.Usuario;
@@ -29,7 +27,6 @@ public class FactoryAbstractLista {
 		Usuario usuarioProprietario = new Usuario();
 		usuarioProprietario.setId(request.getIdUsuarioProprietario());
 		
-		lista.setDataCriacao(LocalDateTime.now());
 		lista.setUsuarioProprietario(usuarioProprietario);
 		lista.setNomeLista(request.getNomeLista());
 		lista.setDescricaoLista(request.getDescricaoLista());

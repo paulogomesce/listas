@@ -16,6 +16,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import com.br.listas.modelo.Usuario;
 import com.br.listas.modelo.itemLista.AbstractItemLista;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -36,9 +39,7 @@ public abstract class AbstractLista{
 	@EqualsAndHashCode.Include
 	@Column(name = "id_lista")
 	private long id;
-	
-	private LocalDateTime dataCriacao;
-	
+		
 	@Column(name = "nome_lista", length = 70, nullable = false)
 	private String nomeLista;
 	
@@ -62,6 +63,14 @@ public abstract class AbstractLista{
 	
 	@Column(name="dtype", insertable = false, updatable = false)
 	private String tipo;
+	
+	@CreationTimestamp
+	@Column(name="data_criacao", columnDefinition = "datetime")
+	private LocalDateTime dataCriacao;
+	
+	@UpdateTimestamp
+	@Column(name="data_atualizacao", columnDefinition = "datetime")
+	private LocalDateTime dataAtualizacao;
 	
 	
 }
