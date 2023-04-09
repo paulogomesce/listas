@@ -43,7 +43,6 @@ public class ControllerLista {
 		return ResponseEntity.status(HttpStatus.CREATED).body(lista);
 	}
 	
-	
 	//TODO: refatorar esse método
 	@PostMapping
 	@RequestMapping("/adicionar-item")
@@ -51,7 +50,7 @@ public class ControllerLista {
 		try {
 			Optional<AbstractLista> listaOptional = repositorio.findById(request.getIdLista());
 			
-			AbstractLista lista = listaOptional.orElseThrow();			
+			AbstractLista lista = listaOptional.orElseThrow(() -> new Exception("Lista não encontrada."));
 			
 			AbstractItemLista item = null;
 			
@@ -62,7 +61,8 @@ public class ControllerLista {
 				}
 				
 				if(request.getProduto().getId() != null) {
-					produto = repositorioProduto.findById(request.getProduto().getId()).orElseThrow();
+					produto = repositorioProduto.findById(request.getProduto().getId()).orElseThrow(() ->
+							new Exception("Produto não encontrado."));
 				}else {
 					produto = new Produto();
 					produto.setNomeProduto(request.getProduto().getNomeProduto());
