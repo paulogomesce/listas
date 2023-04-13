@@ -1,8 +1,12 @@
 package com.br.listas.api.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import com.br.listas.api.controller.dtoRequest.EnumTipoLista;
+import com.br.listas.api.controller.dtoResponse.TipoListaResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -102,6 +106,20 @@ public class ControllerLista {
 		return ResponseEntity.ok(repositorio.findAll());
 	}
 	
-	//TODO: Criar serviço para listar os tipos de lista
+	@GetMapping
+	@RequestMapping("/tipos")
+	public ResponseEntity<List<TipoListaResponse>> listarTiposLista(){
+		List<TipoListaResponse> tiposLista = new ArrayList<>();
+
+		for(EnumTipoLista tipo : EnumTipoLista.values()){
+
+			tiposLista.add(TipoListaResponse.builder()
+							.id(tipo.name())
+							.nomeTipoLista(tipo.getNomeLista())
+					        .build());
+		}
+
+		return ResponseEntity.ok(tiposLista);
+	}
 
 }
