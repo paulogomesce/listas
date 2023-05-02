@@ -7,15 +7,11 @@ import java.util.Optional;
 
 import com.br.listas.api.controller.dtoRequest.EnumTipoLista;
 import com.br.listas.api.controller.dtoResponse.TipoListaResponse;
+import com.br.listas.modelo.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.br.listas.api.controller.dtoRequest.DtoItemListaRequest;
 import com.br.listas.api.controller.dtoRequest.DtoListaRequest;
@@ -104,6 +100,15 @@ public class ControllerLista {
 	@GetMapping
 	public ResponseEntity<List<AbstractLista>> listarTodos(){
 		return ResponseEntity.ok(repositorio.findAll());
+	}
+
+	@GetMapping("/{id}")
+	public ResponseEntity<?> pesquisarPorId(@PathVariable Long id){
+		Optional<AbstractLista> lista = repositorio.findById(id);
+		if(lista.isPresent()){
+			return ResponseEntity.ok(lista.get());
+		}
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Lista não encontrada.");
 	}
 	
 	@GetMapping
