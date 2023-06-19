@@ -40,7 +40,9 @@ public abstract class AbstractItemLista {
 	
 	@Column(name="dtype", insertable = false, updatable = false)
 	public String tipo;
-	
+
+	@Column(name = "status")
+	private EStatusItem status;
 	
 	public void setProduto(Produto produto) {
 	}

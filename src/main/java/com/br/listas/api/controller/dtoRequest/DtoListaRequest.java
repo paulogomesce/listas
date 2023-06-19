@@ -5,9 +5,10 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class DtoListaRequest {	
+public class DtoListaRequest  implements IDtoRequest{
 	
-	private Long idUsuarioProprietario;	
+	private long id;
+	private Long idUsuarioProprietario;
 	private List<Long> idUsuariosConvidados;	
 	private EnumTipoLista tipoLista;
 	private String nomeLista;

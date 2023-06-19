@@ -9,5 +9,6 @@ public class TipoListaResponse {
 
     private String id;
     private String nomeTipoLista;
+    private String dType;
 
 }

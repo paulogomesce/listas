@@ -5,10 +5,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import ch.qos.logback.core.joran.util.beans.BeanUtil;
 import com.br.listas.api.controller.dtoRequest.EnumTipoLista;
 import com.br.listas.api.controller.dtoResponse.TipoListaResponse;
 import com.br.listas.modelo.Usuario;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,104 +30,82 @@ import com.br.listas.modelo.lista.ListaDeDesejos;
 import com.br.listas.modelo.lista.ListaDeTarefas;
 import com.br.listas.repositorio.RepositorioLista;
 import com.br.listas.repositorio.RepositorioProduto;
-
 @RestController
-@RequestMapping("/listas")
 @CrossOrigin(origins = "*")
-public class ControllerLista {
-	
+@RequestMapping("/listas")
+public class ControllerLista implements ControllerAbstract<DtoListaRequest, AbstractLista>{
+
 	@Autowired private RepositorioLista repositorio;
-	@Autowired private RepositorioProduto repositorioProduto;
-	
+
 	@PostMapping
-	public ResponseEntity<AbstractLista> adicionarNova(@RequestBody DtoListaRequest request){
+	public ResponseEntity<AbstractLista> adicionarNovo(@RequestBody DtoListaRequest request){
 		AbstractLista lista = FactoryAbstractLista.contruir(request);
 		lista = repositorio.save(lista);
 		return ResponseEntity.status(HttpStatus.CREATED).body(lista);
 	}
-	
-	//TODO: refatorar esse método
-	@PostMapping
-	@RequestMapping("/adicionar-item")
-	public ResponseEntity<AbstractItemLista> adicionarItem(@RequestBody DtoItemListaRequest request){
-		try {
-			Optional<AbstractLista> listaOptional = repositorio.findById(request.getIdLista());
-			
-			AbstractLista lista = listaOptional.orElseThrow(() -> new Exception("Lista não encontrada."));
-			
-			AbstractItemLista item = null;
-			
-			if(lista instanceof ListaDeCompras) {
-				Produto produto = null;
-				if(request.getProduto() == null) {
-					throw new Exception("Item de Lista de compra é necessário informar o produto.");
-				}
-				
-				if(request.getProduto().getId() != null) {
-					produto = repositorioProduto.findById(request.getProduto().getId()).orElseThrow(() ->
-							new Exception("Produto não encontrado."));
-				}else {
-					produto = new Produto();
-					produto.setNomeProduto(request.getProduto().getNomeProduto());
-					produto = repositorioProduto.save(produto);
-				}			
-				
-				item = new ItemListaDeCompras();
-				item.setProduto(produto);
-				item.setQuantidade(request.getQuantidade());
-			}
-			
-			if(lista instanceof ListaDeTarefas) {
-				item = new ItemListaDeTarefas();
-				item.setNomeItem(request.getNomeItem());
-			}
-	
-			if(lista instanceof ListaDeDesejos) {
-				item = new ItemListaDeDesejos();
-				item.setNomeItem(request.getNomeItem());
-			}		
-			
-			item.setLista(lista);
-			
-			item = repositorio.gravarItem(item);
-			
-			return ResponseEntity.status(HttpStatus.CREATED).body(item);
-			
-			
-		}catch(Exception e) {
-			return ResponseEntity.badRequest().build();
-		}
-		
-	}
-	
+
 	@GetMapping
 	public ResponseEntity<List<AbstractLista>> listarTodos(){
 		return ResponseEntity.ok(repositorio.findAll());
 	}
 
+	@RequestMapping(path = "/tipo/{tipoLista}", method = RequestMethod.GET)
+	public ResponseEntity<List<AbstractLista>> listarPorTipo(@PathVariable String tipoLista){
+		EnumTipoLista eTipo = EnumTipoLista.valueOf(tipoLista);
+		return ResponseEntity.ok(repositorio.findByDType(eTipo.getdType()));
+	}
+
 	@GetMapping("/{id}")
-	public ResponseEntity<?> pesquisarPorId(@PathVariable Long id){
+	public ResponseEntity<?> pesquisarPorId(@PathVariable long id){
 		Optional<AbstractLista> lista = repositorio.findById(id);
 		if(lista.isPresent()){
 			return ResponseEntity.ok(lista.get());
 		}
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Lista não encontrada.");
 	}
-	
+
 	@GetMapping
 	@RequestMapping("/tipos")
-	public ResponseEntity<List<TipoListaResponse>> listarTiposLista(){
+	public ResponseEntity<List<TipoListaResponse>> listarTipos(){
 		List<TipoListaResponse> tiposLista = new ArrayList<>();
 
 		for(EnumTipoLista tipo : EnumTipoLista.values()){
 
 			tiposLista.add(TipoListaResponse.builder()
-							.id(tipo.name())
-							.nomeTipoLista(tipo.getNomeLista())
-					        .build());
+					.id(tipo.name())
+					.nomeTipoLista(tipo.getNomeLista())
+					.dType(tipo.getdType())
+					.build());
 		}
 
 		return ResponseEntity.ok(tiposLista);
+	}
+
+	@PutMapping
+	public ResponseEntity<?> atualizar(@RequestBody DtoListaRequest requestData){
+		try {
+			AbstractLista lista = repositorio.findById(requestData.getId()).orElseThrow(
+					() -> new Exception("Lista não encontrada"));
+
+			lista.setNomeLista(requestData.getNomeLista());
+			lista.setDescricaoLista(requestData.getDescricaoLista());
+
+			return ResponseEntity.ok(repositorio.save(lista));
+
+		}catch(Exception e){
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Lista não encontrada.");
+		}
+	}
+
+	@DeleteMapping
+	@RequestMapping("/{id}")
+	public ResponseEntity<?> deletar(@PathVariable long id){
+		try {
+			repositorio.deleteById(id);
+			return ResponseEntity.ok("Lista deletada");
+		}catch (EmptyResultDataAccessException e){
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("A lista não existe");
+		}
 	}
 
 }
