@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ControllerAbstract<IDtoRequest, Entidade> {
 
-    ResponseEntity<Entidade> adicionarNovo(IDtoRequest request);
+    ResponseEntity<?> adicionarNovo(IDtoRequest request);
 
     ResponseEntity<List<Entidade>> listarTodos();
 

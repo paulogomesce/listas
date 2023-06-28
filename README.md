@@ -14,3 +14,9 @@ SPRING_DATASOURCE_PASSWORD=
 Window comando: setx
 
 Linux comando: export
+
+Rodar a aplicação
+
+java -jar listas.jar &
+
+exit

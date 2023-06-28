@@ -9,7 +9,7 @@ import com.br.listas.modelo.lista.ListaDeDesejos;
 import com.br.listas.modelo.lista.ListaDeTarefas;
 import com.br.listas.repositorio.RepositorioLista;
 import com.br.listas.repositorio.RepositorioProduto;
-import org.hibernate.engine.internal.Collections;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +21,7 @@ import java.util.*;
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/listas/itens")
+@Slf4j
 public class ControllerItemLista implements ControllerAbstract<DtoItemListaRequest, AbstractItemLista>{
 
     @Autowired
@@ -29,7 +30,7 @@ public class ControllerItemLista implements ControllerAbstract<DtoItemListaReque
 
     //TODO: refatorar esse método para colocar a regra de negócio em um service
     @PostMapping
-    public ResponseEntity<AbstractItemLista> adicionarNovo(@RequestBody DtoItemListaRequest request){
+    public ResponseEntity<?> adicionarNovo(@RequestBody DtoItemListaRequest request){
         try {
             Optional<AbstractLista> listaOptional = repositorioLista.findById(request.getIdLista());
 
@@ -48,7 +49,7 @@ public class ControllerItemLista implements ControllerAbstract<DtoItemListaReque
                             new Exception("Produto não encontrado."));
                 }else {
                     List<Produto> produtos = repositorioProduto.findByNameExato(request.getProduto().getNomeProduto());
-                    if(produtos != null){
+                    if(produtos != null && !produtos.isEmpty()){
                         produto = produtos.iterator().next();
                     }
                     if(produto == null){
@@ -81,7 +82,8 @@ public class ControllerItemLista implements ControllerAbstract<DtoItemListaReque
             return ResponseEntity.status(HttpStatus.CREATED).body(item);
 
         }catch(Exception e) {
-            return ResponseEntity.badRequest().build();
+            log.error("Erro ao gravar o item", e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao gravar o item. " + e.getMessage());
         }
     }
 
