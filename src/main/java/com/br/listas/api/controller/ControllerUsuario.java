@@ -19,7 +19,7 @@ import com.br.listas.modelo.Usuario;
 import com.br.listas.repositorio.RepositorioUsuario;
 
 @RestController
-@RequestMapping("/usuarios")
+@RequestMapping("/listas/usuarios")
 public class ControllerUsuario {	
 	
 	@Autowired private RepositorioUsuario repositorio;

@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface RepositorioLista extends JpaRepository<AbstractLista, Long>, RepositorioListaCustom{
 
-    @Query("SELECT l FROM AbstractLista l WHERE l.tipo = :tipo")
+    @Query("SELECT l FROM AbstractLista l WHERE l.tipo = :tipo order by l.id desc")
     List<AbstractLista> findByDType(String tipo);
 	
 	

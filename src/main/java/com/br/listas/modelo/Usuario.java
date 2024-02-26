@@ -1,22 +1,16 @@
 package com.br.listas.modelo;
 
-import java.time.LocalDateTime;
-
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
+import com.br.listas.modelo.embeddable.Endereco;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import com.br.listas.modelo.embeddable.Endereco;
+import javax.persistence.*;
+import java.time.LocalDateTime;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-
+@Cacheable
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
