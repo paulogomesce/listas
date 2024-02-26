@@ -1,8 +1,11 @@
 package com.br.listas.api.controller.dtoResponse;
 
+import com.br.listas.api.controller.dtoRequest.EnumTipoLista;
 import com.br.listas.modelo.Usuario;
 import com.br.listas.modelo.itemLista.AbstractItemLista;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.Builder;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -11,7 +14,9 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class ListaResponse {
+@Data
+@Builder
+public class ListaResponseDTO {
 
     @EqualsAndHashCode.Include
     private long id;
@@ -20,18 +25,14 @@ public class ListaResponse {
 
     private String descricaoLista;
 
-    private Usuario usuarioProprietario;
+    private UsuarioResponseDTO usuarioProprietario;
 
-    private List<Usuario> usuariosConvidados;
+    private List<UsuarioResponseDTO> usuariosConvidados;
 
-    private List<AbstractItemLista> itens;
-
-    private String tipo;
+    private EnumTipoLista tipo;
 
     private LocalDateTime dataCriacao;
 
     private LocalDateTime dataAtualizacao;
-
-    private List<ItemListaResponse> itensListaResponse;
 
 }

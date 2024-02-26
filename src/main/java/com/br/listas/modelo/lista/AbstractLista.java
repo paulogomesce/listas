@@ -57,8 +57,7 @@ public abstract class AbstractLista{
 	    )
 	private List<Usuario> usuariosConvidados;
 	
-	@OneToMany(mappedBy = "lista", fetch = FetchType.EAGER)
-	@JsonManagedReference
+	@OneToMany(mappedBy = "lista", fetch = FetchType.LAZY)
 	private List<AbstractItemLista> itens;
 	
 	@Column(name="dtype", insertable = false, updatable = false)
@@ -71,6 +70,5 @@ public abstract class AbstractLista{
 	@UpdateTimestamp
 	@Column(name="data_atualizacao", columnDefinition = "datetime")
 	private LocalDateTime dataAtualizacao;
-	
 	
 }

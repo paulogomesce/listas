@@ -7,7 +7,9 @@ import java.util.Optional;
 
 import ch.qos.logback.core.joran.util.beans.BeanUtil;
 import com.br.listas.api.controller.dtoRequest.EnumTipoLista;
+import com.br.listas.api.controller.dtoResponse.ListaResponseDTO;
 import com.br.listas.api.controller.dtoResponse.TipoListaResponse;
+import com.br.listas.api.controller.dtoResponse.converter.ListaConverterToResponse;
 import com.br.listas.modelo.Usuario;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +35,7 @@ import com.br.listas.repositorio.RepositorioProduto;
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/listas")
-public class ControllerLista implements ControllerAbstract<DtoListaRequest, AbstractLista>{
+public class ControllerLista implements ControllerAbstract<DtoListaRequest, ListaResponseDTO>{
 
 	@Autowired private RepositorioLista repositorio;
 
@@ -44,15 +46,21 @@ public class ControllerLista implements ControllerAbstract<DtoListaRequest, Abst
 		return ResponseEntity.status(HttpStatus.CREATED).body(lista);
 	}
 
-	@GetMapping
-	public ResponseEntity<List<AbstractLista>> listarTodos(){
-		return ResponseEntity.ok(repositorio.findAll());
+	@GetMapping(path = "/")
+	public ResponseEntity<List<ListaResponseDTO>> listarTodos(){
+
+		List<ListaResponseDTO> listas = ListaConverterToResponse.convert(repositorio.findAll());
+
+		return ResponseEntity.ok(listas);
 	}
 
 	@RequestMapping(path = "/tipo/{tipoLista}", method = RequestMethod.GET)
-	public ResponseEntity<List<AbstractLista>> listarPorTipo(@PathVariable String tipoLista){
+	public ResponseEntity<List<ListaResponseDTO>> listarPorTipo(@PathVariable String tipoLista){
 		EnumTipoLista eTipo = EnumTipoLista.valueOf(tipoLista);
-		return ResponseEntity.ok(repositorio.findByDType(eTipo.getdType()));
+
+		List<ListaResponseDTO> listas = ListaConverterToResponse.convert(repositorio.findByDType(eTipo.getdType()));
+
+		return ResponseEntity.ok(listas);
 	}
 
 	@GetMapping("/{id}")
