@@ -3,6 +3,7 @@ package com.br.listas.api.controller.dtoResponse;
 import com.br.listas.api.controller.dtoRequest.EnumTipoLista;
 import com.br.listas.modelo.Usuario;
 import com.br.listas.modelo.itemLista.AbstractItemLista;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Builder;
 import lombok.Data;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @Data
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ListaResponseDTO {
 
     @EqualsAndHashCode.Include
@@ -34,5 +36,7 @@ public class ListaResponseDTO {
     private LocalDateTime dataCriacao;
 
     private LocalDateTime dataAtualizacao;
+
+    private List<ItemListaResponseDTO> itensDaLista;
 
 }

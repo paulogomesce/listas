@@ -31,7 +31,7 @@ public abstract class AbstractItemLista {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@EqualsAndHashCode.Include
 	@Column(name = "id_item")
-	protected long id;
+	protected Long id;
 	
 	@ManyToOne
 	@JoinColumn(name = "id_lista", referencedColumnName = "id_lista")
@@ -43,26 +43,6 @@ public abstract class AbstractItemLista {
 
 	@Column(name = "status")
 	private EStatusItem status;
-	
-	public void setProduto(Produto produto) {
-	}
-	
-	public Produto getProduto() {
-		return null;
-	}
-	
-	public void setNomeItem(String nomeItem) {
-	}
-		
-	public String getNomeItem(){
-		return null;
-	}
-	
-	public void setQuantidade(Double quantidade) {}
-	
-	public Double getQuantidade() {
-		return null;
-	}
 	
 	@CreationTimestamp
 	@Column(name="data_criacao", columnDefinition = "datetime")

@@ -60,18 +60,18 @@ public class ControllerItemLista implements ControllerAbstract<DtoItemListaReque
                 }
 
                 item = new ItemListaDeCompras();
-                item.setProduto(produto);
-                item.setQuantidade(request.getQuantidade());
+                ((ItemListaDeCompras)item).setProduto(produto);
+                ((ItemListaDeCompras)item).setQuantidade(request.getQuantidade());
             }
 
             if(lista instanceof ListaDeTarefas) {
                 item = new ItemListaDeTarefas();
-                item.setNomeItem(request.getNomeItem());
+                ((ItemListaDeTarefas)item).setNomeItem(request.getNomeItem());
             }
 
             if(lista instanceof ListaDeDesejos) {
                 item = new ItemListaDeDesejos();
-                item.setNomeItem(request.getNomeItem());
+                ((ItemListaDeDesejos)item).setNomeItem(request.getNomeItem());
             }
 
             item.setLista(lista);
@@ -122,9 +122,19 @@ public class ControllerItemLista implements ControllerAbstract<DtoItemListaReque
                 produto = repositorioProduto.save(produto);
             }
 
-            item.setProduto(produto);
-            item.setNomeItem(requestData.getNomeItem());
-            item.setQuantidade(requestData.getQuantidade());
+            if(item instanceof ItemListaDeCompras){
+                ((ItemListaDeCompras)item).setProduto(produto);
+                ((ItemListaDeCompras)item).setQuantidade(requestData.getQuantidade());
+            }
+
+            if(item instanceof ItemListaDeDesejos) {
+                ((ItemListaDeDesejos)item).setNomeItem(requestData.getNomeItem());
+            }
+
+            if(item instanceof ItemListaDeTarefas) {
+                ((ItemListaDeTarefas)item).setNomeItem(requestData.getNomeItem());
+            }
+
             return ResponseEntity.ok(repositorioLista.atualizarItem(item));
 
         }catch(NoSuchElementException e){

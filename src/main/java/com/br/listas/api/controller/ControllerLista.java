@@ -1,37 +1,24 @@
 package com.br.listas.api.controller;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import ch.qos.logback.core.joran.util.beans.BeanUtil;
 import com.br.listas.api.controller.dtoRequest.EnumTipoLista;
 import com.br.listas.api.controller.dtoResponse.ListaResponseDTO;
-import com.br.listas.api.controller.dtoResponse.TipoListaResponse;
+import com.br.listas.api.controller.dtoResponse.TipoListaResponseDTO;
 import com.br.listas.api.controller.dtoResponse.converter.ListaConverterToResponse;
-import com.br.listas.modelo.Usuario;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.br.listas.api.controller.dtoRequest.DtoItemListaRequest;
 import com.br.listas.api.controller.dtoRequest.DtoListaRequest;
 import com.br.listas.factory.FactoryAbstractLista;
-import com.br.listas.modelo.Produto;
-import com.br.listas.modelo.itemLista.AbstractItemLista;
-import com.br.listas.modelo.itemLista.ItemListaDeCompras;
-import com.br.listas.modelo.itemLista.ItemListaDeDesejos;
-import com.br.listas.modelo.itemLista.ItemListaDeTarefas;
 import com.br.listas.modelo.lista.AbstractLista;
-import com.br.listas.modelo.lista.ListaDeCompras;
-import com.br.listas.modelo.lista.ListaDeDesejos;
-import com.br.listas.modelo.lista.ListaDeTarefas;
 import com.br.listas.repositorio.RepositorioLista;
-import com.br.listas.repositorio.RepositorioProduto;
+
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/listas")
@@ -40,10 +27,15 @@ public class ControllerLista implements ControllerAbstract<DtoListaRequest, List
 	@Autowired private RepositorioLista repositorio;
 
 	@PostMapping
-	public ResponseEntity<AbstractLista> adicionarNovo(@RequestBody DtoListaRequest request){
+	public ResponseEntity<?> adicionarNovo(@RequestBody DtoListaRequest request){
 		AbstractLista lista = FactoryAbstractLista.contruir(request);
-		lista = repositorio.save(lista);
-		return ResponseEntity.status(HttpStatus.CREATED).body(lista);
+		try {
+			ListaResponseDTO listaDTO = ListaConverterToResponse.convert(repositorio.save(lista), true);
+			return ResponseEntity.status(HttpStatus.CREATED).body(listaDTO);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao adicionar a lista> " + e.getMessage());
+		}
 	}
 
 	@GetMapping(path = "/")
@@ -66,20 +58,29 @@ public class ControllerLista implements ControllerAbstract<DtoListaRequest, List
 	@GetMapping("/{id}")
 	public ResponseEntity<?> pesquisarPorId(@PathVariable long id){
 		Optional<AbstractLista> lista = repositorio.findById(id);
+
 		if(lista.isPresent()){
-			return ResponseEntity.ok(lista.get());
+			ListaResponseDTO resposta = null;
+			try {
+				resposta = ListaConverterToResponse.convert(lista.get(), true);
+				return ResponseEntity.ok(resposta);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+			}
 		}
+
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Lista não encontrada.");
 	}
 
 	@GetMapping
 	@RequestMapping("/tipos")
-	public ResponseEntity<List<TipoListaResponse>> listarTipos(){
-		List<TipoListaResponse> tiposLista = new ArrayList<>();
+	public ResponseEntity<List<TipoListaResponseDTO>> listarTipos(){
+		List<TipoListaResponseDTO> tiposLista = new ArrayList<>();
 
 		for(EnumTipoLista tipo : EnumTipoLista.values()){
 
-			tiposLista.add(TipoListaResponse.builder()
+			tiposLista.add(TipoListaResponseDTO.builder()
 					.id(tipo.name())
 					.nomeTipoLista(tipo.getNomeLista())
 					.dType(tipo.getdType())
@@ -98,9 +99,10 @@ public class ControllerLista implements ControllerAbstract<DtoListaRequest, List
 			lista.setNomeLista(requestData.getNomeLista());
 			lista.setDescricaoLista(requestData.getDescricaoLista());
 
-			return ResponseEntity.ok(repositorio.save(lista));
+			return ResponseEntity.ok(ListaConverterToResponse.convert(repositorio.save(lista), true));
 
 		}catch(Exception e){
+			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Lista não encontrada.");
 		}
 	}

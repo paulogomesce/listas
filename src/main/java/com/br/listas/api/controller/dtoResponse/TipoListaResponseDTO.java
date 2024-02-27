@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class TipoListaResponse {
+public class TipoListaResponseDTO {
 
     private String id;
     private String nomeTipoLista;
