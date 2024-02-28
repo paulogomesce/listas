@@ -6,17 +6,22 @@ Instalação
 Criar as variáveis de ambiente:
 
 SPRING_DATASOURCE_URL=jdbc:mysql://{host do servidr}/listas-dev?createDatabaseIfNotExist=true&serverTimezone=UTC
-
 SPRING_DATASOURCE_USERNAME=
-
 SPRING_DATASOURCE_PASSWORD=
 
 Window comando: setx
 
 Linux comando: export
 
-Rodar a aplicação
+Rodar a aplicação em produção
 
 java -jar listas.jar &
 
 exit
+
+Subir em dev
+
+java -jar -"Dspring.profiles.active=local" .\listas.jar
+
+
+
