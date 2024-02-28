@@ -16,10 +16,7 @@ import java.util.stream.Collectors;
 public class ListaConverterToResponse {
 
     public static ListaResponseDTO convert(AbstractLista lista, boolean adicionaItens) throws Exception {
-        UsuarioResponseDTO usuario = UsuarioResponseDTO.builder()
-                .id(lista.getUsuarioProprietario().getId())
-                .nome(lista.getUsuarioProprietario().getNome())
-                .build();
+        UsuarioResponseDTO usuario = UsuarioConvertToResponse.convert(lista.getUsuarioProprietario());
 
         List<ItemListaResponseDTO> itensLista = null;
 

@@ -1,6 +1,8 @@
 package com.br.listas.api.controller;
 
 import com.br.listas.api.controller.dtoRequest.DtoItemListaRequest;
+import com.br.listas.api.controller.dtoResponse.ItemListaResponseDTO;
+import com.br.listas.api.controller.dtoResponse.converter.ItemListaConvertToResponse;
 import com.br.listas.modelo.Produto;
 import com.br.listas.modelo.itemLista.*;
 import com.br.listas.modelo.lista.AbstractLista;
@@ -79,7 +81,9 @@ public class ControllerItemLista implements ControllerAbstract<DtoItemListaReque
 
             item = repositorioLista.gravarItem(item);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(item);
+            ItemListaResponseDTO itemResponse = ItemListaConvertToResponse.convert(item);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(itemResponse);
 
         }catch(Exception e) {
             log.error("Erro ao gravar o item", e);
@@ -94,8 +98,11 @@ public class ControllerItemLista implements ControllerAbstract<DtoItemListaReque
 
     @GetMapping
     @RequestMapping("/lista/{idLista}")
-    public ResponseEntity<List<AbstractItemLista>> listarItensDaLista(@PathVariable long idLista){
-        return ResponseEntity.ok(repositorioLista.listarItensDaLista(idLista));
+    public ResponseEntity<List<ItemListaResponseDTO>> listarItensDaLista(@PathVariable long idLista){
+        List<ItemListaResponseDTO> resposta =
+                ItemListaConvertToResponse.convert(repositorioLista.listarItensDaLista(idLista));
+
+        return ResponseEntity.ok(resposta);
     }
 
     @Override
@@ -135,7 +142,9 @@ public class ControllerItemLista implements ControllerAbstract<DtoItemListaReque
                 ((ItemListaDeTarefas)item).setNomeItem(requestData.getNomeItem());
             }
 
-            return ResponseEntity.ok(repositorioLista.atualizarItem(item));
+            ItemListaResponseDTO resposta = ItemListaConvertToResponse.convert(repositorioLista.atualizarItem(item));
+
+            return ResponseEntity.ok(resposta);
 
         }catch(NoSuchElementException e){
 
@@ -162,7 +171,8 @@ public class ControllerItemLista implements ControllerAbstract<DtoItemListaReque
     public ResponseEntity<?> pesquisarPorId(@PathVariable long id) {
         AbstractItemLista item = repositorioLista.pesquisarItemPorId(id);
         if(item != null) {
-            return ResponseEntity.ok(item);
+            ItemListaResponseDTO resposta = ItemListaConvertToResponse.convert(item);
+            return ResponseEntity.ok(resposta);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item não encontrado");
     }
@@ -171,9 +181,14 @@ public class ControllerItemLista implements ControllerAbstract<DtoItemListaReque
     public ResponseEntity<?> alteraStatus(@RequestBody DtoItemListaRequest request){
         //TODO: melhorar desempenho
         AbstractItemLista item = repositorioLista.pesquisarItemPorId(request.getId());
-        item.setStatus(request.getStatus());
-        repositorioLista.atualizarItem(item);
-        return ResponseEntity.ok(item);
+        if(item != null) {
+            item.setStatus(request.getStatus());
+            repositorioLista.atualizarItem(item);
+            ItemListaResponseDTO resposta = ItemListaConvertToResponse.convert(item);
+            return ResponseEntity.ok(resposta);
+        }else{
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item não encontrado");
+        }
     }
 
     @RequestMapping(path = "dominio-status", method = RequestMethod.GET)
