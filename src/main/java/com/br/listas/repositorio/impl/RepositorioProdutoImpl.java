@@ -14,8 +14,8 @@ public class RepositorioProdutoImpl implements RepositorioProdutoCustom {
     @PersistenceContext
     private EntityManager manager;
 
-    @Override
-    public List<Produto> listarMaisUsados(Long idUsuario) {
+    //@Override
+    //public List<Produto> listarMaisUsados(Long idUsuario) {
 
         /*SELECT p.id_produto, p.nome_produto, COUNT(1) quantidade
         FROM item_lista il, produto p
@@ -24,7 +24,7 @@ public class RepositorioProdutoImpl implements RepositorioProdutoCustom {
         ORDER BY 3 desc;*/
 
 
-        System.out.println("Pesquisado" + idUsuario);
-        return null;
-    }
+        //System.out.println("Pesquisado" + idUsuario);
+        //return null;
+    //}
 }

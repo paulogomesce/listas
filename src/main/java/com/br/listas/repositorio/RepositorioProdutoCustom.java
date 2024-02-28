@@ -9,6 +9,4 @@ import java.util.List;
 
 @Repository
 public interface RepositorioProdutoCustom{
-
-    List<Produto> listarMaisUsados(Long idUsuario);
 }

@@ -16,10 +16,9 @@ public class ControllerProduto {
     private RepositorioProduto repositorioProduto;
 
     @GetMapping
-    @RequestMapping("/mais-usados/{idUsuario}")
-    public ResponseEntity<List<ProdutoResponseDTO>> listarMaisUsados(@PathVariable Long idUsuario){
-        repositorioProduto.listarMaisUsados(idUsuario);
-        return null;
+    @RequestMapping("/mais-comprados/{idUsuario}")
+    public ResponseEntity<List<ProdutoResponseDTO>> listarMaisComprados(@PathVariable Long idUsuario){
+        return ResponseEntity.ok(repositorioProduto.maisComprados(idUsuario));
     }
 
 }
